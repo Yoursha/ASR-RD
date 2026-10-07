@@ -1,0 +1,13 @@
+[Greetings] 你好，很高兴认识你。|Hello, nice to meet you.
+[Greetings] 今天天气非常好，阳光明媚。|The weather is very nice today, bright and sunny.
+[Daily] 你今天过得怎么样？|How has your day been today?
+[Daily] 我正在学习汉语口语发音。|I am currently learning Chinese spoken pronunciation.
+[Food] 请问这个菜辣不辣？|Excuse me, is this dish spicy?
+[Food] 我想点一杯拿铁咖啡，加冰不加糖。|I would like to order an iced latte with no sugar.
+[Travel] 请问去地铁站怎么走？|Excuse me, how do I get to the subway station?
+[Travel] 这里的风景非常美丽，我很喜欢。|The scenery here is very beautiful, I like it very much.
+[Work] 谢谢你的帮助，我们合作愉快。|Thank you for your help, it was a pleasure working together.
+[Work] 我们需要在一个小时内完成这个项目。|We need to complete this project within one hour.
+[Story] 举头望明月，低头思故乡。|I raise my head to look at the bright moon, and lower my head thinking of my hometown.
+[Challenge] 吃葡萄不吐葡萄皮，不吃葡萄倒吐葡萄皮。|Eat grapes without spitting grape skins, don't eat grapes but spit grape skins.
+[Daily] 熟能生巧，坚持练习就能说得越来越好。|Practice makes perfect, keep practicing and you will speak better and better.
