@@ -4,5 +4,5 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './', // Ensures relative asset resolution for GitHub Pages subpaths
+  base: '/ASR-RD/', // Set exact repository base path for https://yoursha.github.io/ASR-RD/
 })
