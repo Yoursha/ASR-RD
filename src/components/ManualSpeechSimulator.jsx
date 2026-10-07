@@ -20,6 +20,14 @@ export default function ManualSpeechSimulator({ targetText, onEvaluateText }) {
       // Exact target sentence
       setInputText(targetText);
       onEvaluateText(targetText);
+    } else if (type === 'tone') {
+      // Intonation tone mistake (e.g. replace '兴' xìng with '星' xīng, or '好' hǎo with '号' hào)
+      const modified = targetText
+        .replace('兴', '星')
+        .replace('好', '号')
+        .replace('辣', '拉');
+      setInputText(modified !== targetText ? modified : targetText + ' 星');
+      onEvaluateText(modified !== targetText ? modified : targetText + ' 星');
     } else if (type === 'wrong') {
       // Mispronounce a character (e.g., substitute one character)
       const modified = chars.map((c, i) => {
@@ -87,6 +95,13 @@ export default function ManualSpeechSimulator({ targetText, onEvaluateText }) {
           style={{ fontSize: '0.82rem', padding: '6px 14px', border: '1px solid rgba(16, 185, 129, 0.4)' }}
         >
           ✨ Simulate 100% Perfect Speech
+        </button>
+        <button
+          onClick={() => handlePresetScenarios('tone')}
+          className="btn-secondary"
+          style={{ fontSize: '0.82rem', padding: '6px 14px', border: '1px solid rgba(245, 158, 11, 0.6)', color: '#fbbf24' }}
+        >
+          🎵 Simulate Tone / Intonation Mistake
         </button>
         <button
           onClick={() => handlePresetScenarios('wrong')}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Volume2, Mic, MicOff, ChevronLeft, ChevronRight, Shuffle, Gauge, Layers, Info } from 'lucide-react';
 import { getSentencePinyin } from '../utils/diff';
+import TonePitchVisualizer from './TonePitchVisualizer';
 
 export default function SentenceCard({
   sentence,
@@ -15,7 +16,9 @@ export default function SentenceCard({
   interimTranscript,
   ttsSpeed,
   setTtsSpeed,
-  asrSupported
+  asrSupported,
+  pitchHistory,
+  currentPitch
 }) {
   const pinyinList = getSentencePinyin(sentence.targetText);
   const targetChars = Array.from(sentence.targetText);
@@ -255,6 +258,14 @@ export default function SentenceCard({
           </p>
         </div>
       )}
+
+      {/* Live Vocal Pitch & Intonation Contour Visualizer */}
+      <TonePitchVisualizer
+        isTracking={isListeningASR}
+        pitchHistory={pitchHistory}
+        currentPitch={currentPitch}
+        targetSentence={sentence.targetText}
+      />
 
       {!asrSupported && (
         <div style={{
