@@ -8,6 +8,7 @@ import SentenceListModal from './components/SentenceListModal';
 import { fetchSentencesFromDB, getDefaultSentences } from './utils/dbParser';
 import { compareSentences } from './utils/diff';
 import { TTSPlayer, ASRListener } from './utils/speech';
+import { PitchTracker } from './utils/pitchTracker';
 import { Sparkles, Info, RefreshCw } from 'lucide-react';
 
 export default function App() {
@@ -23,12 +24,18 @@ export default function App() {
   // Audio Speech engines
   const ttsRef = useRef(null);
   const asrRef = useRef(null);
+  const pitchTrackerRef = useRef(null);
+
   const [isPlayingTTS, setIsPlayingTTS] = useState(false);
   const [ttsSpeed, setTtsSpeed] = useState(0.9);
 
   const [isListeningASR, setIsListeningASR] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [asrSupported, setAsrSupported] = useState(true);
+
+  // Pitch Tracker state
+  const [pitchHistory, setPitchHistory] = useState([]);
+  const [currentPitch, setCurrentPitch] = useState(null);
 
   // Evaluation & Results
   const [evaluationResult, setEvaluationResult] = useState(null);
@@ -44,6 +51,7 @@ export default function App() {
   useEffect(() => {
     ttsRef.current = new TTSPlayer();
     asrRef.current = new ASRListener();
+    pitchTrackerRef.current = new PitchTracker();
     setAsrSupported(asrRef.current.isSupported);
 
     loadSentences();
@@ -98,8 +106,10 @@ export default function App() {
   const stopAllAudio = () => {
     if (ttsRef.current) ttsRef.current.stop();
     if (asrRef.current) asrRef.current.stopListening();
+    if (pitchTrackerRef.current) pitchTrackerRef.current.stopTracking();
     setIsPlayingTTS(false);
     setIsListeningASR(false);
+    setCurrentPitch(null);
   };
 
   // TTS Playback handler
@@ -136,6 +146,15 @@ export default function App() {
     setEvaluationResult(null);
     setInterimTranscript('');
     setIsListeningASR(true);
+    setPitchHistory([]);
+
+    // Start pitch tracking
+    if (pitchTrackerRef.current) {
+      pitchTrackerRef.current.startTracking((history, pitch) => {
+        setPitchHistory([...history]);
+        setCurrentPitch(pitch);
+      });
+    }
 
     const started = asrRef.current.startListening({
       onResult: ({ transcript }) => {
@@ -143,6 +162,9 @@ export default function App() {
       },
       onEnd: (finalTranscript) => {
         setIsListeningASR(false);
+        if (pitchTrackerRef.current) {
+          pitchTrackerRef.current.stopTracking();
+        }
         const textToEvaluate = finalTranscript || interimTranscript;
         if (textToEvaluate) {
           evaluateSpeech(textToEvaluate);
@@ -150,18 +172,27 @@ export default function App() {
       },
       onError: (errMessage) => {
         setIsListeningASR(false);
+        if (pitchTrackerRef.current) {
+          pitchTrackerRef.current.stopTracking();
+        }
         alert(`ASR Microphone Notice: ${errMessage}`);
       }
     });
 
     if (!started) {
       setIsListeningASR(false);
+      if (pitchTrackerRef.current) {
+        pitchTrackerRef.current.stopTracking();
+      }
     }
   };
 
   const handleStopASR = () => {
     if (asrRef.current) {
       asrRef.current.stopListening();
+    }
+    if (pitchTrackerRef.current) {
+      pitchTrackerRef.current.stopTracking();
     }
     setIsListeningASR(false);
   };
@@ -250,6 +281,8 @@ export default function App() {
               ttsSpeed={ttsSpeed}
               setTtsSpeed={setTtsSpeed}
               asrSupported={asrSupported}
+              pitchHistory={pitchHistory}
+              currentPitch={currentPitch}
             />
 
             {/* ASR Feedback and Pronunciation Diff Results */}
